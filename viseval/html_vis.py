@@ -7,13 +7,11 @@ Script for generating html-table-visualizations for quick evaluations
 
 
 from pathlib import Path, PurePath
-from typing import List
+from typing import List, Dict
 import dominate
 
 
-def html_visualize(
-    web_path, data, ids, cols, title="visualization", html_file_name: str = "index.html"
-):
+def html_visualize(web_path, data, ids, cols, title, html_file_name):
     """Visualization in html.
 
     Args:
@@ -82,16 +80,18 @@ def html_visualize(
                             else:
                                 dominate.tags.p(str(value))
 
-    with open(web_path / html_file_name, "w") as html_file:
+    html_file_path = web_path / html_file_name
+    with open(html_file_path, "w") as html_file:
         html_file.write(web.render())
+    return html_file_path
 
 
 def visualize_helper(
-    tasks,
-    dataset_path: Path,
+    visualization_rows: List[Dict[str, Path]],
+    visualize_root: Path,
     cols: List = None,
     html_file_name: str = "index.html",
-    title: str = "dataset visualization",
+    title: str = "Visualization Title",
 ):
     """
     Helper script for visualization
@@ -102,18 +102,18 @@ def visualize_helper(
     if cols is None:
         cols = list()
         determine_cols = True
-    for idx, dump_paths in enumerate(tasks):
+    for idx, dump_paths in enumerate(visualization_rows):
         ids.append(str(idx))
         for col, path in dump_paths.items():
             if determine_cols and col not in cols:
                 cols.append(col)
             if path is not None:
                 if isinstance(path, PurePath):
-                    data[f"{idx}_{col}"] = str(path.relative_to(dataset_path))
+                    data[f"{idx}_{col}"] = str(path.relative_to(visualize_root))
                 else:
                     data[f"{idx}_{col}"] = path
-    html_visualize(
-        str(dataset_path),
+    return html_visualize(
+        str(visualize_root),
         data,
         ids,
         cols,
