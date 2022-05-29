@@ -6,9 +6,9 @@ Script for generating html-table-visualizations for quick evaluations
 """
 
 
-from pathlib import Path
+from pathlib import Path, PurePath
+from typing import List
 import dominate
-from pathlib import PurePath
 
 
 def html_visualize(
@@ -86,7 +86,6 @@ def html_visualize(
         html_file.write(web.render())
 
 
-from typing import List
 def visualize_helper(
     tasks,
     dataset_path: Path,
