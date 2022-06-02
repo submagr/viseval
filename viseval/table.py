@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Dict, List
 import dominate
 from dominate import tags
@@ -10,19 +11,23 @@ class Table:
         self,
         table_data: List[Dict],
         col_names: List[str],
+        html_root: Path,
         title: str = "Visualizations",
     ):
         self.table_data = table_data
+        self.html_root = html_root
         self.col_names = col_names
         self.title = title
 
     @classmethod
-    def from_list_dict(cls, table_data: List[Dict], title: str = "Visualizations"):
+    def from_list_dict(
+        cls, table_data: List[Dict], html_root: Path, title: str = "Visualizations"
+    ):
         col_names = set()
         for row_data in table_data:
             col_names.update(row_data.keys())
         col_names = sorted(list(col_names))
-        return cls(table_data, col_names, title)
+        return cls(table_data, col_names, html_root, title)
 
     def generate(self):
         # Html document
@@ -41,9 +46,6 @@ class Table:
         )
         doc.head.add(tags.style(style))
 
-        # Let's collect different type of blocks needed.
-        # How about this API: Give me the doc and id's of the div. And their content.
-        # And the doc will be updated. That's it. Yeah. Let's do this.
         block_data = {}
 
         with doc:  # <body>
@@ -67,8 +69,11 @@ class Table:
                                 block_data[block_cls] = block_data.get(
                                     block_cls, []
                                 ) + [(col, cell_id, data)]
-        
-        for block_cls, data in block_data.items():
-            doc = block_cls().update_doc(doc, data)
 
-        return doc.render()
+        for block_cls, data in block_data.items():
+            doc = block_cls().update_doc(doc, data, self.html_root)
+
+        html_file_path = self.html_root / "index.html"
+        with open(html_file_path, "w") as fp:
+            fp.write(doc.render())
+        return html_file_path

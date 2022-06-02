@@ -36,7 +36,7 @@ To visualize the generated html file, use either of the following method:
 ```sh
 python -m http.server
 ```
-![Sample visualization](resources/sample_vis.png)
+![Sample visualization](resources/demo.gif)
 
 ## Acknowledgement:
 This idea and the repository is built on a tool I used in [Professor Shuran's lab](https://cair.cs.columbia.edu/index.html).

@@ -7,7 +7,7 @@ class MeshBlock(Block):
     def __init__(self):
         pass
 
-    def update_doc(self, doc, data):
+    def update_doc(self, doc, data, html_root):
         style = raw(
             """
             .three-div {
@@ -161,7 +161,7 @@ class MeshBlock(Block):
             three_script.add(
                 raw(
                     f"""
-                    scenes.push(create_three_cell("{cell_id}", "{mesh_path}"));
+                    scenes.push(create_three_cell("{cell_id}", "{mesh_path.relative_to(html_root)}"));
                     """
                 )
             )

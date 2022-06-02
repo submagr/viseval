@@ -3,5 +3,5 @@ build/
 dist/
 viseval.egg-info/
 .vscode/
-examples/eval_results/
+eval_results/
 *.html
