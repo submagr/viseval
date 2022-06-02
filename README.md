@@ -6,37 +6,35 @@ pip install viseval
 ```
 
 ## Usage:
-`viseval.visualize_helper` takes in a list of dicts. Every element in the list indicates
+`viseval.Table` takes in a list of dicts. Every element in the list indicates
 a row in the HTML visualization. Each dict should contain column-name: image-path.
 
 ```python
-from viseval import visualize_helper
+from viseval import Table
 
 eval_dir = Path("eval_results")
-gt_img_paths = []
-pred_img_paths = []
+# Vis data is a list of dictionaries.
+# - Each element in the list corresponds to a row in the table.
+# - Each key:value pair in a dictionary represents column-name: column-data.
+vis_data = []
+vis_data.append({
+    "gt_img": eval_results / "0_gt.png",
+    "pred_img": eval_results / "0_gt.png",
+    "gt_mesh": eval_results / "0_gt_mesh.obj",
+    "pred_mesh": eval_results / "0_pred_mesh.obj",
+    "gt_label": "0_gt_label",
+    "pred_label": "0_gt_label",
+})
+# Populate vis data with the image / mesh path, text data in your eval folder.
 
-# Add your standard model evaluation code here:
-# - Save gt and predicted images inside eval_dir
-# - Add corresponding img paths in gt_img_paths and pred_img_paths list
-
-# Save html visualizations
-visualization_rows = [
-    {"gt": gt_img_path, "pred": pred_img_path}
-    for gt_img_path, pred_img_path in zip(gt_img_paths, pred_img_paths)
-]
-html_path = visualize_helper(visualization_rows, eval_dir)
-print(html_path)
+# Once populated, save visualization table as html file
+table = Table.from_list_dict(vis_data, eval_dir)
+html_path = table.generate()
 ```
 
-To visualize the generated html file, use either of the following method:
-- Open the html file in a browser
-- Run a simple python http server from inside the evaluation directory and open
-[localhost:8000](localhost:8000) url:
-```sh
-python -m http.server
-```
-![Sample visualization](resources/sample_vis.png)
+For demo, you can run `python examples/demo.py`. To visualize the generated html file, run a simple `python -m http.server` from inside the evaluation directory and open [localhost:8000](localhost:8000) url in any web browser:
+
+![Sample visualization](resources/demo.gif)
 
 ## Acknowledgement:
 This idea and the repository is built on a tool I used in [Professor Shuran's lab](https://cair.cs.columbia.edu/index.html).
